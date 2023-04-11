@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/publicas/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar>  
+                        <p:menuitem value="Nuevo"  ajax="true"  action="#{permisosSeguridadController.newUsuarioGrupoSeguridad}"
+                                    update="frm:formularioPermiso" icon="fa fa-file-o"/>  
+                        <p:menuitem value="Guardar" icon="fa fa-save" action="#{permisosSeguridadController.guardar}" 
+                                    disabled="false" update="frm:listaPermisos frm:formularioPermiso" />
+                        <p:menuitem value="Modificar" icon="fa fa-edit" disabled="false" action="#{permisosSeguridadController.modificar}"
+                                    update="frm:listaPermisos frm:formularioPermiso"/>
+                        <p:menuitem value="Eliminar" icon="fa fa-eraser" disabled="false" action="#{permisosSeguridadController.eliminar}"
+                                    update="frm:listaPermisos frm:formularioPermiso"/>                        
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" outcome="/inicio"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:growl id="message" showDetail="true" />
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{usuarioSeguridadController.logout}">    
+                                <p:confirm header="Confirmación" message="¿Esta Seguro de salir del sistema?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                            </p:confirmDialog>    
+                        </f:facet>
+                    </p:menubar> 
+                    
+                    <h3>
+                        <i class="fa fa-lock" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Registro de Permisos" />
+                    </h3>
+
+                    <p:panelGrid id="formularioPermiso" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <h:outputLabel value="Código:" for="idPermiso"/>
+                        <p:inputText maxlength="5" value="#{permisosSeguridadController.selected.idUsuarioGrupo}" id="idPermiso" disabled="true"/>  
+                        <h:outputLabel value="Usuario"/>
+                        <p:selectOneMenu id="idSeguridadUsuario" disabled="#{permisosSeguridadController.deshabilitado}" 
+                                         value="#{permisosSeguridadController.selected.idUsuario.idUsuario}">
+                             <f:selectItem itemLabel="Seleccione Usuario" itemValue="" noSelectionOption="true" />
+                             <f:selectItems value="#{permisosSeguridadController.listUsuarioSeguridad}" var="usuario" itemValue="#{usuario.idUsuario}" itemLabel="#{usuario.nombreUsuario} #{usuario.apellidoUsuario}" />
+                        </p:selectOneMenu>   
+                        <h:outputLabel value="Grupo"/>
+                        <p:selectOneMenu id="idSeguridadGrupo" disabled="#{permisosSeguridadController.deshabilitado}"
+                                         value="#{permisosSeguridadController.selected.idGrupo.idGrupo}">
+                             <f:selectItem itemLabel="Seleccione Grupo" itemValue="" noSelectionOption="true" />
+                             <f:selectItems value="#{permisosSeguridadController.listGrupoSeguridad}" var="grupo" itemValue="#{grupo.idGrupo}" itemLabel="#{grupo.nombreGrupo}" />
+                        </p:selectOneMenu>     
+                    </p:panelGrid>
+                  
+                </div>
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Permisos"/>
+                    </h1>
+                    <p:dataTable id="listaPermisos" var="entidad" value="#{permisosSeguridadController.listUsuarioGrupoSeguridad}" rowKey="#{entidad.idUsuarioGrupo}" 
+                                 selectionMode="single" selection="#{permisosSeguridadController.selected}" scrollable="true" scrollHeight="400"> 
+
+                        <p:ajax event="rowSelect" listener="#{permisosSeguridadController.onRowSelect}" update="frm:formularioPermiso" />
+                        <p:column headerText="Código" width="35">  
+                            <h:outputText value="#{entidad.idUsuarioGrupo}" />  
+                        </p:column>  
+
+                        <p:column headerText="Usuario" width="50">  
+                            <h:outputText value="#{entidad.idUsuario.nombreUsuario} #{entidad.idUsuario.apellidoUsuario}" />  
+                        </p:column>  
+                        
+                        <p:column headerText="Grupo" width="50">  
+                            <h:outputText value="#{entidad.idGrupo.nombreGrupo}" />  
+                        </p:column>  
+                    </p:dataTable> 
+                </div>
+            </div>
+        </div>  
+    </ui:define>
+
+</ui:composition>
